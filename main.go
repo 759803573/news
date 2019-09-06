@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"news/app/models"
-	"news/config"
 	"news/config/initializers"
 
 	"github.com/gin-gonic/gin"
@@ -11,11 +9,19 @@ import (
 
 func main() {
 	r := gin.Default()
-	initializers.DB.Init("", nil)
-	x := models.User{}
-	initializers.DB.Conn.AutoMigrate(&x)
-	fmt.Println(config.DB, x)
+	migrate()
 	r.Static("/assets", "./public/assets")
 	r.Static("/views", "./app/views")
+
 	r.Run()
+}
+
+func migrate() {
+	initializers.DB.Init("", nil)
+	initializers.DB.Conn.AutoMigrate(&models.User{})
+	initializers.DB.Conn.AutoMigrate(&models.Category{})
+	initializers.DB.Conn.AutoMigrate(&models.Feed{})
+	initializers.DB.Conn.AutoMigrate(&models.Item{})
+	initializers.DB.Conn.AutoMigrate(&models.ItemStatus{})
+	initializers.DB.Conn.AutoMigrate(&models.Collection{})
 }
