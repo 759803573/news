@@ -2,14 +2,18 @@ package main
 
 import (
 	"news/app/models"
+	"news/app/workers"
 	"news/config/initializers"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
+	// init()
 	migrate()
+
+	workers.GetFeedsSyncWork().Run()
+	r := gin.Default()
 	r.Static("/assets", "./public/assets")
 	r.Static("/views", "./app/views")
 

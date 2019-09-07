@@ -21,3 +21,19 @@ type Item struct {
 	Enclosures  string
 	Categories  string
 }
+
+//Create Create
+func (item *Item) Create() {
+	config.DB.Conn.Create(item)
+}
+
+//CreateOrIgnore CreateOrIgnore
+func (item *Item) CreateOrIgnore() {
+	tmpItem := &Item{}
+
+	if config.DB.Conn.Debug().Where("link = ?", item.Link).First(tmpItem).RecordNotFound() {
+		item.Create()
+	} else {
+		*item = *tmpItem
+	}
+}

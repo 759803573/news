@@ -1,16 +1,16 @@
 package models
 
-import "news/config"
+import (
+	"news/config"
+)
 
 //Feed feed
 type Feed struct {
 	config.DBBaseModel
 	Name         string
-	UserID       uint
-	User         User
 	Title        string
 	Description  string
-	FeedLink     string
+	FeedLink     string `gorm:"unique;not null"`
 	Link         string
 	Author       string
 	Language     string
@@ -20,4 +20,37 @@ type Feed struct {
 	CategoriesID uint
 	Category     *Category
 	Items        []Item
+}
+
+func (feed *Feed) Create() {
+	config.DB.Conn.Create(feed)
+}
+
+//CreateOrUpdate CreateOrUpdate
+func (feed *Feed) CreateOrUpdate() {
+	tmpFeed := &Feed{}
+
+	if config.DB.Conn.Debug().Where("feed_link = ?", feed.FeedLink).First(tmpFeed).RecordNotFound() {
+		feed.Create()
+	} else {
+		config.DB.Conn.Model(tmpFeed).UpdateColumns(feed)
+
+		*feed = *tmpFeed
+	}
+}
+
+//CreateItems CreateItems
+func (feed *Feed) CreateItems(items []*Item) {
+	tx := config.DB.Conn.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	for _, item := range items {
+		item.FeedID = feed.ID
+		item.CreateOrIgnore()
+	}
+	tx.Commit()
 }
