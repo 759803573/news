@@ -1,23 +1,25 @@
 package main
 
 import (
+	"news/app"
 	"news/app/models"
-	"news/app/workers"
 	"news/config/initializers"
-
-	"github.com/gin-gonic/gin"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
 	// init()
 	migrate()
 
-	workers.GetFeedsSyncWork().Run()
-	r := gin.Default()
-	r.Static("/assets", "./public/assets")
-	r.Static("/views", "./app/views")
+	//workers.GetFeedsSyncWork().Run()
 
-	r.Run()
+	app.New(":8080").Run()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
 }
 
 func migrate() {
