@@ -19,6 +19,7 @@ func (work *FeedDownloadWork) Init() *FeedDownloadWork {
 
 //Run 下载
 func (work *FeedDownloadWork) Run() {
-	resp, _ := work.client.Get(work.FeedLink)
-	(&FeedParseWorker{}).Init(work.FeedLink).Run(resp.Body)
+	if resp, err := work.client.Get(work.FeedLink); err == nil {
+		(&FeedParseWorker{}).Init(work.FeedLink).Run(resp.Body)
+	}
 }
