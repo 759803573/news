@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"news/app/helpers"
 	"news/app/models"
-	"news/app/apis/v1/categories/feeds"
+	feeds "news/app/apis/v1/categories/feeds"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,7 @@ func NewRoot(g *gin.RouterGroup) {
 	gCategory.Use(middlewareGenerateCategory(keyCategoryID))
 	gCategory.GET("/status", getCategoryStatusHandle)
 	gFeeds := gCategory.Group("feeds")
-	Feeds.NewRoot(gFeeds)
+	feeds.NewRoot(gFeeds)
 }
 
 func middlewareGenerateCategory(fieldName string) gin.HandlerFunc {
