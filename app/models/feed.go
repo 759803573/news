@@ -4,6 +4,8 @@ import (
 	"news/config"
 )
 
+const KeyFeedID = "feed_id"
+
 //Feed feed
 type Feed struct {
 	config.DBBaseModel

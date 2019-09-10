@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+const KeyItemID = "item_id"
+
 //Item Item
 type Item struct {
 	config.DBBaseModel

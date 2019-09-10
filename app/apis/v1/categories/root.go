@@ -2,25 +2,42 @@ package categories
 
 import (
 	"fmt"
+	"strconv"
+
 	"net/http"
-	"news/app/apis/v1/categories/items"
 	"news/app/helpers"
 	"news/app/models"
-	"strconv"
+	"news/app/apis/v1/categories/feeds"
 
 	"github.com/gin-gonic/gin"
 )
 
-const keyCategoryID = "category_id"
+const keyCategoryID = models.KeyCategoryID
 
-//NewRoot API 挂载
+//NewRoot /Categories 挂载点
 func NewRoot(g *gin.RouterGroup) {
 	g.GET("/", getCategoriesHandle)
 	gCategory := g.Group(fmt.Sprintf(":%s", keyCategoryID))
 	gCategory.Use(helpers.MiddlewareHelpers.CheckFieldID(keyCategoryID))
+	gCategory.Use(middlewareGenerateCategory(keyCategoryID))
 	gCategory.GET("/status", getCategoryStatusHandle)
-	gItems := gCategory.Group("items")
-	items.NewRoot(gItems)
+	gFeeds := gCategory.Group("feeds")
+	Feeds.NewRoot(gFeeds)
+}
+
+func middlewareGenerateCategory(fieldName string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id := c.GetString(fieldName)
+		category := models.Category{UserID: 1}
+		if id != "*" {
+			if categoryIDInt, err := strconv.Atoi(id); err != nil {
+				c.String(http.StatusBadRequest, err.Error())
+			} else {
+				category.ID = uint(categoryIDInt)
+			}
+		}
+		c.Set("category", &category)
+	}
 }
 
 func getCategoriesHandle(c *gin.Context) {
@@ -32,21 +49,10 @@ func getCategoriesHandle(c *gin.Context) {
 }
 
 func getCategoryStatusHandle(c *gin.Context) {
-	categoryID := c.GetString(keyCategoryID)
-	category := &models.Category{}
-	if categoryID != "*" {
-		if categoryIDInt, err := strconv.Atoi(categoryID); err != nil {
-			c.String(http.StatusBadRequest, err.Error())
-		} else {
-			category.ID = uint(categoryIDInt)
-		}
-	}
+	category, _ := c.Get("category")
+	fmt.Println(category)
 
-	if categoryStatus := category.GetStatus(); categoryStatus != nil {
+	if categoryStatus := category.(*models.Category).GetStatus(); categoryStatus != nil {
 		c.JSON(http.StatusOK, categoryStatus)
 	}
-}
-
-func getCategoryItemsHandle(c *gin.Context) {
-	c.String(http.StatusOK, "pong")
 }

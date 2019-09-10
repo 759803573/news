@@ -5,6 +5,8 @@ import (
 	"news/config"
 )
 
+const KeyCategoryID = "category_id"
+
 //Category feed category
 type Category struct {
 	config.DBBaseModel
