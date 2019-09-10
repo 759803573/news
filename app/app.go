@@ -53,9 +53,24 @@ func (app *App) createRouter() *gin.Engine {
 //Migrate 执行 DB Migrate
 func (app *App) Migrate() {
 	config.DB.Conn.AutoMigrate(&models.User{})
+	config.DB.Conn.AutoMigrate(&models.CategoryFeed{})
 	config.DB.Conn.AutoMigrate(&models.Category{})
 	config.DB.Conn.AutoMigrate(&models.Feed{})
 	config.DB.Conn.AutoMigrate(&models.Item{})
 	config.DB.Conn.AutoMigrate(&models.ItemStatus{})
 	config.DB.Conn.AutoMigrate(&models.Collection{})
+	user := &models.User{}
+	user.ID = 1
+	config.DB.Conn.FirstOrCreate(&user)
+	category := &models.Category{Name: "Category1"}
+	category.ID = 1
+	config.DB.Conn.FirstOrCreate(category)
+	category = &models.Category{Name: "Category2"}
+	category.ID = 2
+	config.DB.Conn.FirstOrCreate(category)
+
+	categoryFeed := &models.CategoryFeed{CategoryID: 1, FeedID: 1}
+	config.DB.Conn.FirstOrCreate(categoryFeed, categoryFeed)
+	categoryFeed = &models.CategoryFeed{CategoryID: 2, FeedID: 2}
+	config.DB.Conn.FirstOrCreate(categoryFeed, categoryFeed)
 }
