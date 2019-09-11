@@ -38,21 +38,36 @@ func middlewareGenerateItem(fieldName string) gin.HandlerFunc {
 	}
 }
 
+func item(c *gin.Context) *models.Item {
+	item, ok := c.Get("item")
+
+	if !ok {
+		return &models.Item{}
+	}
+
+	return item.(*models.Item)
+}
+
 func getFeedItemsHandle(c *gin.Context) {
 	paramsCategory, _ := c.Get("category")
 	paramsFeed, _ := c.Get("feed")
-	//paramsFeed, _ := c.Get("feed")
-	item, ok := c.Get("item")
-	if !ok {
-		item = &models.Item{}
-	}
-	items := paramsFeed.(*models.Feed).GetItems(item.(*models.Item), paramsCategory.(*models.Category).Feeds(nil))
+
+	paramsItem := item(c)
+	items := paramsFeed.(*models.Feed).GetItems(paramsItem, paramsCategory.(*models.Category).Feeds(nil))
 
 	c.JSON(http.StatusOK, items)
 }
 
 func readFeedItemsHandle(c *gin.Context) {
-	c.String(http.StatusOK, "pong")
+	paramsCategory, _ := c.Get("category")
+	paramsFeed, _ := c.Get("feed")
+
+	paramsItem := item(c)
+	items := paramsFeed.(*models.Feed).GetItems(paramsItem, paramsCategory.(*models.Category).Feeds(nil))
+	if len(items) == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "item not found"})
+	}
+	items[0].Read()
 }
 
 func collectionFeedItemHandle(c *gin.Context) {

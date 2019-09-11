@@ -42,7 +42,12 @@ func (item *Item) CreateOrIgnore() {
 	}
 }
 
-//
+//Read set itemstatus to read
+func (item *Item) Read() {
+	(&ItemStatus{ItemID: item.ID, ReadAt: time.Now()}).Create()
+}
+
+//ItemStatus association
 func (item *Item) ItemStatus(association *gorm.DB) *gorm.DB {
 	if association == nil {
 		association = config.DB.Conn.Debug().Model(item)
