@@ -43,6 +43,10 @@ func (app *App) Run() {
 	}()
 }
 
+//Term 停止服务
+func (app *App) Term() {
+}
+
 func (app *App) createRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Recovery())
