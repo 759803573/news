@@ -18,6 +18,7 @@ func NewRoot(g *gin.RouterGroup) {
 	g.GET("/", getCategoryFeedsHandle)
 	gFeed := g.Group(fmt.Sprintf(":%s", keyFeedID))
 	gFeed.Use(helpers.MiddlewareHelpers.CheckFieldID(keyFeedID))
+	gFeed.Use(middlewareGenerateFeed(keyFeedID))
 	gItem := gFeed.Group("items")
 	items.NewRoot(gItem)
 }

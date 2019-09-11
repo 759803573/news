@@ -64,12 +64,13 @@ func (f *Feed) Items(association *gorm.DB) *gorm.DB {
 		association = config.DB.Conn.Debug().Model(f)
 	}
 	return association.
-		Joins("left join items on feeds.id = items.feed_id").Where(f)
+		Joins("left join items on feeds.id = items.feed_id").
+		Where(f)
 }
 
 //GetItems Get items
 func (f *Feed) GetItems(item *Item, association *gorm.DB) (items []*Item) {
 	items = make([]*Item, 0)
-	f.Items(association).Select("items.*").Scan(&items).Where(item)
+	f.Items(association).Select("items.*").Where(item).Scan(&items)
 	return
 }

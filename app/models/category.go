@@ -46,7 +46,7 @@ func (c *Category) Feeds(association *gorm.DB) *gorm.DB {
 //GetFeeds Get Feeds
 func (c *Category) GetFeeds(feed *Feed, association *gorm.DB) (feeds []*Feed) {
 	feeds = make([]*Feed, 0)
-	c.Feeds(association).Select("f.*").Scan(&feeds).Where(feed)
+	c.Feeds(association).Select("feeds.*").Where(feed).Scan(&feeds)
 	return
 }
 
