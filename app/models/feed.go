@@ -2,6 +2,8 @@ package models
 
 import (
 	"news/config"
+
+	"github.com/jinzhu/gorm"
 )
 
 const KeyFeedID = "feed_id"
@@ -21,7 +23,6 @@ type Feed struct {
 	Generator    string
 	CategoriesID uint
 	Category     *Category
-	Items        []Item
 }
 
 func (feed *Feed) Create() {
@@ -55,4 +56,20 @@ func (feed *Feed) CreateItems(items []*Item) {
 		item.CreateOrIgnore()
 	}
 	tx.Commit()
+}
+
+//Items Items
+func (f *Feed) Items(association *gorm.DB) *gorm.DB {
+	if association == nil {
+		association = config.DB.Conn.Debug().Model(f)
+	}
+	return association.
+		Joins("left join items on feeds.id = items.feed_id").Where(f)
+}
+
+//GetItems Get items
+func (f *Feed) GetItems(item *Item, association *gorm.DB) (items []*Item) {
+	items = make([]*Item, 0)
+	f.Items(association).Select("items.*").Scan(&items).Where(item)
+	return
 }

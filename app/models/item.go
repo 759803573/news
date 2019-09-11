@@ -3,6 +3,8 @@ package models
 import (
 	"news/config"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 const KeyItemID = "item_id"
@@ -38,4 +40,13 @@ func (item *Item) CreateOrIgnore() {
 	} else {
 		*item = *tmpItem
 	}
+}
+
+//
+func (item *Item) ItemStatus(association *gorm.DB) *gorm.DB {
+	if association == nil {
+		association = config.DB.Conn.Debug().Model(item)
+	}
+	return association.
+		Joins("left join item_statuses on item_statuses.item_id = items.id").Where(item)
 }

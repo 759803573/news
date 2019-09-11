@@ -5,9 +5,9 @@ import (
 	"strconv"
 
 	"net/http"
+	feeds "news/app/apis/v1/categories/feeds"
 	"news/app/helpers"
 	"news/app/models"
-	feeds "news/app/apis/v1/categories/feeds"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,7 +52,7 @@ func getCategoryStatusHandle(c *gin.Context) {
 	category, _ := c.Get("category")
 	fmt.Println(category)
 
-	if categoryStatus := category.(*models.Category).GetStatus(); categoryStatus != nil {
+	if categoryStatus := category.(*models.Category).GetStatus(nil); categoryStatus != nil {
 		c.JSON(http.StatusOK, categoryStatus)
 	}
 }

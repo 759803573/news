@@ -38,7 +38,8 @@ func middlewareGenerateFeed(fieldName string) gin.HandlerFunc {
 }
 
 func getCategoryFeedsHandle(c *gin.Context) {
-	category, _ := c.Get("category")
-	fmt.Println(category.(models.Category))
-	c.String(http.StatusOK, "pong")
+	paramsCategory, _ := c.Get("category")
+	//paramsFeed, _ := c.Get("feed")
+	feeds := paramsCategory.(*models.Category).GetFeeds(&models.Feed{}, nil)
+	c.JSON(http.StatusOK, feeds)
 }

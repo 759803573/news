@@ -62,7 +62,7 @@ func (app *App) Migrate() {
 	user := &models.User{}
 	user.ID = 1
 	config.DB.Conn.FirstOrCreate(&user)
-	category := &models.Category{Name: "Category1"}
+	category := &models.Category{Name: "Category1", UserID: user.ID}
 	category.ID = 1
 	config.DB.Conn.FirstOrCreate(category)
 	category = &models.Category{Name: "Category2"}
