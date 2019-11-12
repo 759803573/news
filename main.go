@@ -5,6 +5,7 @@ import (
 	"news/config/initializers"
 	"os"
 	"os/signal"
+	"path"
 	"syscall"
 )
 
@@ -20,6 +21,8 @@ func main() {
 
 	ap := app.New(":8080")
 	ap.Migrate()
+	ap.Static("/views", path.Join(".", "app", "views"))
+	ap.Static("", path.Join(".", "app", "assets"))
 	ap.Run()
 
 	quit := make(chan os.Signal)

@@ -42,10 +42,11 @@ func middlewareGenerateCategory(fieldName string) gin.HandlerFunc {
 
 func getCategoriesHandle(c *gin.Context) {
 	category := models.Category{UserID: 1}
-	if err := category.GetByUserID(); err != nil {
-		fmt.Println("Not Found")
+	if categories, err := category.FindAll(); err != nil {
+		c.JSON(http.StatusNotFound, nil)
+	} else {
+		c.JSON(http.StatusOK, categories)
 	}
-	fmt.Println(category)
 }
 
 func getCategoryStatusHandle(c *gin.Context) {

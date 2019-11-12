@@ -12,3 +12,7 @@ GET|/v1/categories/:category_id/feeds/:feed_id/items/|[x]
 GET|/v1/categories/:category_id/feeds/:feed_id/items/:item_id/|[x]
 POST|/v1/categories/:category_id/feeds/:feed_id/items/:item_id/read|[x]
 POST|/v1/categories/:category_id/feeds/:feed_id/items/:item_id/collection|[]
+
+#### 静态页面：
+name|path
+mainpage|

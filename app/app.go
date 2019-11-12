@@ -12,7 +12,6 @@ import (
 
 //App App入口
 type App struct {
-	router     *gin.Engine
 	httpServer *http.Server
 }
 
@@ -33,6 +32,18 @@ func (app *App) inintServer(addr string) {
 		WriteTimeout:   20 * time.Second,
 		MaxHeaderBytes: 1 << 20,
 	}
+}
+
+func (app *App) router() *gin.Engine {
+	return app.httpServer.Handler.(*gin.Engine)
+}
+
+//Static Serving static files, default is /assets
+func (app *App) Static(relativePath string, root string) {
+	if relativePath == "" {
+		relativePath = "/assets"
+	}
+	app.router().Static(relativePath, root)
 }
 
 //Run start api server
@@ -69,7 +80,7 @@ func (app *App) Migrate() {
 	category := &models.Category{Name: "Category1", UserID: user.ID}
 	category.ID = 1
 	config.DB.Conn.FirstOrCreate(category)
-	category = &models.Category{Name: "Category2"}
+	category = &models.Category{Name: "Category2", UserID: user.ID}
 	category.ID = 2
 	config.DB.Conn.FirstOrCreate(category)
 
